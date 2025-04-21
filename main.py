@@ -74,8 +74,8 @@ def main():
                     if button_box.collidepoint(event.pos):
                         button["hover"] = 0
                         if button["purpose"] == "close":
-                            gameover.set_volume(1)
-                            gameover.play()
+                            scream.set_volume(1)
+                            scream.play()
                             running = False
                         elif button["purpose"] == "sound1":
                             sound1.play()
