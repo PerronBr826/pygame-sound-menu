@@ -39,6 +39,9 @@ def init_game ():
     pygame.display.set_caption(TITLE)
     return screen
 
+def darken(color, dark):
+    return [pygame.math.clamp(color[0] * dark, 0, 255),pygame.math.clamp(color[1] * dark, 0, 255),pygame.math.clamp(color[2] * dark, 0, 255),]
+
 def main():
     screen = init_game()
     clock = pygame.time.Clock() # Initialize the clock here
@@ -54,15 +57,20 @@ def main():
     scream = pygame.mixer.Sound("Sounds/screammale.ogg")
     music = pygame.mixer.music.load(music_dir)
 
+    # Set Volume for Sounds
+    sound1.set_volume(1)
+    sound2.set_volume(1)
+    gameover.set_volume(1)
+    scream.set_volume(1)
+
     music_len = pygame.mixer.Sound(music_dir).get_length()
 
-    def darken(color, dark):
-        return [pygame.math.clamp(color[0] * dark, 0, 255),pygame.math.clamp(color[1] * dark, 0, 255),pygame.math.clamp(color[2] * dark, 0, 255),]
-
-    buttons = [{"text" : "Sound 1", "hover" : 0, "color" : (155,155,0), "purpose" : "sound1"}, {"text" : "Sound 2", "hover" : 0, "color" : (155,155,0), "purpose" : "sound2"},
-               {"text" : "Music Play", "hover" : 0, "color" : (55,255,50), "purpose" : "playmusic"},
+    buttons = [{"text" : "Sound 1", "hover" : 0, "color" : (155,155,0), "purpose" : "sound1"}, 
+               {"text" : "Sound 2", "hover" : 0, "color" : (155,155,0), "purpose" : "sound2"},
+               {"text" : "Play", "hover" : 0, "color" : (55,255,50), "purpose" : "playmusic"},
                {"text" : "Pause", "hover" : 0, "color" : (255,255,50), "purpose" : "pausemusic"},
-               {"text" : "Music Stop", "hover" : 0, "color" : (55,55,250), "purpose" : "stopmusic"},
+               {"text" : "Stop", "hover" : 0, "color" : (55,55,250), "purpose" : "stopmusic"},
+               {"text" : "Useless", "hover" : 0, "color" : (155,55,50), "purpose" : "none"},
                {"text" : "Close", "hover" : 0, "color" : (155,55,50), "purpose" : "close"},
                ]
 
@@ -76,17 +84,16 @@ def main():
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 button_i = 0
                 for button in buttons:
-                    button_x = BUTTON_WIDTH/2 + 30
+                    button_x = BUTTON_WIDTH / 2 + 30
                     button_y = 40 + (65 * button_i)
                     faux_buttonx = BUTTON_WIDTH + button["hover"]
                     faux_buttony = BUTTON_HEIGHT + button["hover"] / 2
 
-                    button_box = pygame.Rect(button_x - faux_buttonx/ 2, button_y - faux_buttony/2, faux_buttonx, faux_buttony)
+                    button_box = pygame.Rect(button_x - faux_buttonx / 2, button_y - faux_buttony / 2, faux_buttonx, faux_buttony)
 
                     if button_box.collidepoint(event.pos):
                         button["hover"] = 0
                         if button["purpose"] == "close":
-                            scream.set_volume(1)
                             scream.play()
                             running = False
                         elif button["purpose"] == "sound1":
@@ -109,18 +116,16 @@ def main():
                             pygame.mixer.music.rewind()
                             pygame.mixer.music.stop()
 
-                        print(button["text"])
-
-
                     button_i += 1
+
             
-        screen.fill(WHITE) # Use color from config
+        screen.fill(WHITE) # DO NOT Use color from config
 
         mouse_x, mouse_y = pygame.mouse.get_pos()
         button_i = 0
 
         for button in buttons:
-            button_x = BUTTON_WIDTH/2 + 30
+            button_x = BUTTON_WIDTH / 2 + 30
             button_y = 40 + (65 * button_i)
 
             faux_buttonx = BUTTON_WIDTH + button["hover"]
@@ -128,7 +133,7 @@ def main():
 
             original_color = button["color"]
 
-            button_box = pygame.Rect(button_x - faux_buttonx/ 2, button_y - faux_buttony/2, faux_buttonx, faux_buttony)
+            button_box = pygame.Rect(button_x - faux_buttonx / 2, button_y - faux_buttony / 2, faux_buttonx, faux_buttony)
 
 
 
@@ -172,7 +177,7 @@ def main():
 
         bar_origin = [WINDOW_WIDTH - 500, WINDOW_HEIGHT - 100]
 
-        completion = ((pygame.mixer.music.get_pos()/1000) / music_len)
+        completion = ((pygame.mixer.music.get_pos() / 1000) / music_len)
         
         pygame.draw.rect(screen, (55,55,55), [bar_origin[0], bar_origin[1], 400, 4])
         pygame.draw.rect(screen, (255,55,55), [bar_origin[0], bar_origin[1], 400 * completion, 4])
